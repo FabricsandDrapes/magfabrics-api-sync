@@ -25,8 +25,12 @@ jobs:
         run: |
           go run ./cmd/csv-generator-go -apikey "${{ secrets.MAG_API_KEY }}" -shopify > magfabrics-shopify.csv
           
-      - name: Commit latest CSV files
+           - name: Push CSVs to private data repo
         run: |
+          git clone https://x-access-token:${{ secrets.DATA_REPO_TOKEN }}@github.com/FabricsandDrapes/mag-data-feed.git data-repo
+          cp magfabrics-raw.csv data-repo/magfabrics-raw.csv
+          cp magfabrics-shopify.csv data-repo/magfabrics-shopify.csv
+          cd data-repo
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
           git add magfabrics-raw.csv magfabrics-shopify.csv
