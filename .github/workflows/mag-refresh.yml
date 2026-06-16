@@ -25,7 +25,7 @@ jobs:
         run: |
           go run ./cmd/csv-generator-go -apikey "${{ secrets.MAG_API_KEY }}" -shopify > magfabrics-shopify.csv
           
-           - name: Push CSVs to private data repo
+       - name: Push CSVs to private data repo
         run: |
           git clone https://x-access-token:${{ secrets.DATA_REPO_TOKEN }}@github.com/FabricsandDrapes/mag-data-feed.git data-repo
           cp magfabrics-raw.csv data-repo/magfabrics-raw.csv
