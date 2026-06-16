@@ -1,0 +1,33 @@
+name: Refresh MAG CSV
+
+on:
+  workflow_dispatch:
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+
+      - name: Generate raw MAG CSV
+        run: |
+          go run ./cmd/csv-generator-go -apikey "${{ secrets.MAG_API_KEY }}" > magfabrics-raw.csv
+
+      - name: Generate Shopify MAG CSV
+        run: |
+          go run ./cmd/csv-generator-go -apikey "${{ secrets.MAG_API_KEY }}" -shopify > magfabrics-shopify.csv
+
+      - name: Upload CSV files
+        uses: actions/upload-artifact@v4
+        with:
+          name: magfabrics-csv-files
+          path: |
+            magfabrics-raw.csv
+            magfabrics-shopify.csv
