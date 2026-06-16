@@ -2,7 +2,8 @@ name: Refresh MAG CSV
 
 on:
   workflow_dispatch:
-
+permissions:
+  contents: write
 jobs:
   refresh:
     runs-on: ubuntu-latest
@@ -23,7 +24,15 @@ jobs:
       - name: Generate Shopify MAG CSV
         run: |
           go run ./cmd/csv-generator-go -apikey "${{ secrets.MAG_API_KEY }}" -shopify > magfabrics-shopify.csv
-
+          
+      - name: Commit latest CSV files
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add magfabrics-raw.csv magfabrics-shopify.csv
+          git commit -m "Update MAG CSV files" || echo "No changes to commit"
+          git push
+          
       - name: Upload CSV files
         uses: actions/upload-artifact@v4
         with:
